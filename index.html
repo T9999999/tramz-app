@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TRAMZ — Premium Custom Tailoring</title>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#f5f2ec;color:#171614;font-family:Arial,sans-serif}
+a{text-decoration:none;color:inherit}
+button,input,textarea{font:inherit}
+.nav{height:72px;border-bottom:1px solid #ddd8cf;display:flex;align-items:center;justify-content:space-between;padding:0 6%;position:sticky;top:0;background:#f5f2ecee;backdrop-filter:blur(10px);z-index:10}
+.logo{font-weight:bold;letter-spacing:5px}
+.logo span{margin-left:4px}
+.navlinks{display:flex;gap:25px;font-size:13px}
+.navlinks a:hover{opacity:.5}
+.nav button{background:none;border:0;border-bottom:1px solid #171614;cursor:pointer;font-size:12px}
+.hero{min-height:78vh;padding:11vh 8%;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-size:10px;letter-spacing:3px;color:#777;margin-bottom:20px}
+h1,h2,h3{font-family:Georgia,serif;font-weight:500}
+h1{font-size:clamp(50px,8vw,100px);line-height:.95;letter-spacing:-4px;margin:0 0 28px}
+h1 em{font-style:italic}
+.hero p{max-width:560px;color:#777;line-height:1.8}
+.actions{display:flex;gap:10px;margin-top:25px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 20px;border:1px solid #171614;font-size:12px;cursor:pointer}
+.dark{background:#171614;color:white}
+.light{background:transparent}
+.section{padding:90px 7%}
+.sectionhead{display:flex;justify-content:space-between;gap:30px;align-items:end;margin-bottom:40px}
+h2{font-size:55px;margin:0 0 10px}
+.sectionhead p{color:#777;font-size:13px}
+.filters{display:flex;gap:7px;flex-wrap:wrap}
+.filters button{background:none;border:1px solid #d5d0c8;padding:8px 12px;font-size:11px}
+.filters button.active{background:#171614;color:white}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{cursor:pointer}
+.media{aspect-ratio:4/5;background:#ddd;overflow:hidden;position:relative}
+.media img,.media video{width:100%;height:100%;object-fit:cover}
+.play{position:absolute;bottom:15px;left:15px;background:white;border-radius:50%;width:38px;height:38px;display:grid;place-items:center}
+.cardinfo{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #ddd8cf}
+.cardinfo strong,.cardinfo span{display:block}
+.cardinfo strong{font-size:13px}
+.cardinfo span{font-size:11px;color:#777;margin-top:5px}
+.process{background:#ebe7df}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;margin-top:55px}
+.step{border-top:1px solid #bbb4a9;padding-top:15px}
+.step h3{font-size:24px;margin-top:35px}
+.step p{font-size:13px;line-height:1.7;color:#777}
+.client{background:#171614;color:white;padding:80px 7%;display:flex;align-items:center;justify-content:space-between;gap:30px}
+.client p{color:#bbb;max-width:600px;line-height:1.7}
+.form{max-width:900px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:30px 0}
+input,textarea{border:1px solid #d5d0c8;background:transparent;padding:15px;width:100%;outline:none}
+textarea{min-height:130px;grid-column:1/-1}
+footer{border-top:1px solid #ddd8cf;padding:50px 7%;display:flex;gap:25px;align-items:center;font-size:12px}
+footer p{color:#777;flex:1}
+.modalbg{position:fixed;inset:0;background:#000b;z-index:50;display:grid;place-items:center;padding:20px}
+.modal{background:#f5f2ec;padding:18px;max-width:850px;width:100%;position:relative}
+.modal img,.modal video{width:100%;max-height:75vh;object-fit:contain;background:#111}
+.close{position:absolute;right:10px;top:10px;border:0;border-radius:50%;background:white;width:35px;height:35px;cursor:pointer}
+.portal{background:#f5f2ec;width:min(600px,100%);height:100%;margin-left:auto;padding:30px;overflow:auto}
+.portal h2{font-size:40px}
+.order{border:1px solid #d5d0c8;padding:18px;margin:12px 0}
+.orderhead{display:flex;justify-content:space-between}
+.orderhead span{display:block;font-size:11px;color:#777;margin-top:5px}
+.status{background:#e5e1d9;padding:7px 9px;font-size:10px}
+@media(max-width:800px){
+.nav{padding:0 20px}.navlinks{display:none}
+.hero{padding:80px 20px}
+.section{padding:70px 20px}
+.sectionhead{display:block}
+.gallery{grid-template-columns:1fr 1fr}
+.steps{grid-template-columns:1fr 1fr}
+.client{display:block;padding:70px 20px}
+footer{padding:40px 20px;display:block}
+}
+@media(max-width:500px){
+.gallery,.steps,.grid{grid-template-columns:1fr}
+textarea{grid-column:auto}
+h1{font-size:55px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="nav">
+<a class="logo" href="#">TRAMZ<span>•</span></a>
+
+<nav class="navlinks">
+<a href="#styles">Styles</a>
+<a href="#process">How it works</a>
+<a href="#book">Book</a>
+</nav>
+
+<button onclick="clientPortal()">Client Login</button>
+</header>
+
+<section class="hero">
+<div class="eyebrow">CUSTOM TAILORING • ABUJA / FCT</div>
+
+<h1>Made for your style.<br><em>Tailored by TRAMZ.</em></h1>
+
+<p>
+Premium native wear, tailored to your measurements,
+with fabric supplied by TRAMZ and delivery across Abuja.
+</p>
+
+<div class="actions">
+<a class="btn dark" href="#styles">Explore Styles</a>
+<a class="btn light" href="#book">Book a Service</a>
+</div>
+</section>
+
+<section id="styles" class="section">
+
+<div class="sectionhead">
+<div>
+<div class="eyebrow">TRAMZ CRAFTED WITH INTENT</div>
+<h2>The Catalogue</h2>
+<p>Browse TRAMZ styles, client looks and production content.</p>
+</div>
+
+<div class="filters">
+<button class="active" onclick="filterMedia('All',this)">All</button>
+<button onclick="filterMedia('Senator',this)">Senator</button>
+<button onclick="filterMedia('Native',this)">Native</button>
+<button onclick="filterMedia('Behind the scenes',this)">Behind the scenes</button>
+</div>
+</div>
+
+<div id="gallery" class="gallery"></div>
+
+</section>
+
+<section class="client">
+
+<div>
+<div class="eyebrow" style="color:#aaa">PRIVATE CLIENT SPACE</div>
+<h2>Your TRAMZ order, in one place.</h2>
+<p>
+Clients can log in to view their orders, production status,
+delivery information and payment balance.
+</p>
+</div>
+
+<button class="btn light" style="color:white;border-color:white" onclick="clientPortal()">
+Open Client Portal
+</button>
+
+</section>
+
+<section id="process" class="section process">
+
+<div class="eyebrow">THE TRAMZ PROCESS</div>
+<h2>Simple from selection to delivery.</h2>
+
+<div class="steps">
+
+<div class="step">
+<span>01</span>
+<h3>Choose a style</h3>
+<p>Select a catalogue design or submit your own inspiration.</p>
+</div>
+
+<div class="step">
+<span>02</span>
+<h3>Book your service</h3>
+<p>Choose your fitting date and delivery details.</p>
+</div>
+
+<div class="step">
+<span>03</span>
+<h3>We tailor it</h3>
+<p>TRAMZ supplies suitable fabric and makes your garment.</p>
+</div>
+
+<div class="step">
+<span>04</span>
+<h3>We deliver</h3>
+<p>Track your finished outfit through your client portal.</p>
+</div>
+
+</div>
+</section>
+
+<section id="book" class="section">
+
+<div class="eyebrow">BOOK A SERVICE</div>
+<h2>Start your order</h2>
+
+<form class="form" onsubmit="book(event)">
+
+<div class="grid">
+<input name="name" placeholder="Full name" required>
+<input name="phone" placeholder="Phone / WhatsApp" required>
+<input name="style" placeholder="Style">
+<input name="date" type="date" required>
+<input name="time" type="time" required>
+<input name="area" placeholder="Delivery area / zone">
+<textarea name="notes" placeholder="Measurements or special requests"></textarea>
+</div>
+
+<button class="btn dark">Continue to WhatsApp</button>
+
+</form>
+</section>
+
+<footer>
+
+<div class="logo">TRAMZ<span>•</span></div>
+<p>Premium custom tailoring in Abuja, FCT.</p>
+
+<a href="https://wa.me/2349016240683" target="_blank">
+WhatsApp
+</a>
+
+</footer>
+
+<script>
+
+const WHATSAPP="2349016240683";
+
+let media=[
+{
+title:"Classic Senator",
+category:"Senator",
+type:"image",
+url:"https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1000&q=85"
+},
+{
+title:"Modern Native",
+category:"Native",
+type:"image",
+url:"https://images.unsplash.com/photo-1506629905607-d9a7d8f3c7e1?auto=format&fit=crop&w=1000&q=85"
+},
+{
+title:"Tailoring Detail",
+category:"Behind the scenes",
+type:"image",
+url:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1000&q=85"
+}
+];
+
+let currentFilter="All";
+
+function render(){
+
+let gallery=document.getElementById("gallery");
+
+let items=media.filter(x =>
+currentFilter==="All" || x.category===currentFilter
+);
+
+gallery.innerHTML=items.map((x,i)=>`
+
+<article class="card" onclick='openMedia(${JSON.stringify(x)})'>
+
+<div class="media">
+
+${x.type==="video"
+?`<video src="${x.url}" muted></video><div class="play">▶</div>`
+:`<img src="${x.url}" alt="${x.title}">`}
+
+</div>
+
+<div class="cardinfo">
+<div>
+<strong>${x.title}</strong>
+<span>${x.category}</span>
+</div>
+<span>→</span>
+</div>
+
+</article>
+
+`).join("");
+
+}
+
+function filterMedia(category,button){
+
+currentFilter=category;
+
+document.querySelectorAll(".filters button")
+.forEach(x=>x.classList.remove("active"));
+
+button.classList.add("active");
+
+render();
+
+}
+
+function openMedia(item){
+
+let bg=document.createElement("div");
+bg.className="modalbg";
+
+bg.innerHTML=`
+
+<div class="modal">
+
+<button class="close" onclick="this.closest('.modalbg').remove()">×</button>
+
+${item.type==="video"
+?`<video src="${item.url}" controls autoplay></video>`
+:`<img src="${item.url}" alt="${item.title}">`}
+
+<h3>${item.title}</h3>
+<p>${item.category}</p>
+
+</div>
+`;
+
+document.body.appendChild(bg);
+
+}
+
+function book(e){
+
+e.preventDefault();
+
+let f=new FormData(e.target);
+
+let message=
+`Hi TRAMZ,
+
+I want to book a tailoring service.
+
+Name: ${f.get("name")}
+Phone: ${f.get("phone")}
+Style: ${f.get("style")}
+Date: ${f.get("date")}
+Time: ${f.get("time")}
+Delivery area: ${f.get("area")}
+Notes: ${f.get("notes")}`;
+
+window.open(
+"https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(message),
+"_blank"
+);
+
+}
+
+function clientPortal(){
+
+let bg=document.createElement("div");
+bg.className="modalbg";
+
+bg.innerHTML=`
+
+<div class="portal">
+
+<button class="close" onclick="this.closest('.modalbg').remove()">×</button>
+
+<div class="eyebrow">TRAMZ CLIENT PORTAL</div>
+
+<h2>My Orders</h2>
+
+<p style="color:#777;font-size:13px">
+Sign in to view your order status, balance and private fitting media.
+</p>
+
+<form onsubmit="clientLogin(event)">
+
+<input id="clientEmail" type="email" placeholder="Email" required style="margin:7px 0">
+
+<input id="clientPassword" type="password" placeholder="Password" required style="margin:7px 0">
+
+<button class="btn dark" style="margin-top:10px">
+Sign in
+</button>
+
+</form>
+
+<div id="clientMessage"></div>
+
+</div>
+`;
+
+document.body.appendChild(bg);
+
+}
+
+function clientLogin(e){
+
+e.preventDefault();
+
+document.getElementById("clientMessage").innerHTML=`
+
+<div style="margin-top:30px;border-top:1px solid #ddd;padding-top:25px">
+
+<div class="order">
+
+<div class="orderhead">
+
+<div>
+<strong>TRZ-DEMO-001</strong>
+<span>Classic Senator</span>
+</div>
+
+<span class="status">In Production</span>
+
+</div>
+
+<p style="font-size:12px;color:#777">
+Your TRAMZ outfit is currently being produced.
+</p>
+
+<p>
+<strong>Outstanding balance: ₦85,000</strong>
+</p>
+
+<a class="btn dark"
+href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hi TRAMZ, I want to pay for order TRZ-DEMO-001. Please send me the payment instructions.")}"
+target="_blank">
+Pay via WhatsApp
+</a>
+
+<a class="btn light"
+href="https://wa.me/${WHATSAPP}?text=${encodeURIComponent("Hi TRAMZ, please send me the receipt for order TRZ-DEMO-001.")}"
+target="_blank">
+Request Receipt
+</a>
+
+</div>
+
+</div>
+`;
+
+}
+
+render();
+
+</script>
+
+</body>
+  </html>
