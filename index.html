@@ -216,11 +216,11 @@ const WHATSAPP="2349016240683";
 const SUPABASE_URL = "https://xovmenojawhnzsvemkji.supabase.co";
 const SUPABASE_KEY = "sb_publishable_3vp3lLt7NnTU-_UX8ZCctg_GOBn9gjf";
 
-  let supabase = null;
+let supabaseClient = null;
 
 try {
   if (window.supabase && window.supabase.createClient) {
-    supabase = window.supabase.createClient(
+    supabaseClient = window.supabase.createClient(
       SUPABASE_URL,
       SUPABASE_KEY
     );
@@ -445,13 +445,13 @@ async function staffLogin(){
   const password = prompt("TRAMZ Staff Password:");
   if(!password) return;
 
-  if(!supabase){
+  if(!supabaseClient){
     alert("Secure login is not available. Please refresh the page.");
     return;
   }
 
   const { data, error } =
-    await supabase.auth.signInWithPassword({
+    await supabaseClient.auth.signInWithPassword({
       email: email,
       password: password
     });
@@ -462,14 +462,14 @@ async function staffLogin(){
   }
 
   const { data: staff, error: staffError } =
-    await supabase
+    await supabaseClient
       .from("staff_roles")
       .select("role")
       .eq("user_id", data.user.id)
       .single();
 
   if(staffError || !staff){
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     alert("Access denied. This account is not a TRAMZ staff account.");
     return;
   }
