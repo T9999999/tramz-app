@@ -218,11 +218,17 @@ WhatsApp
 
 </footer>
 
-<script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script
+src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const WHATSAPP="2349016240683";
+const SUPABASE_URL = "https://xovmenojawhnzsvemkji.supabase.co";
+const SUPABASE_KEY = "sb_publishable_3vp3lLt7NnTU-_UX8ZCctg_GOBn9gjf";
 
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 let media=[
 {
 title:"Classic Senator",
