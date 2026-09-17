@@ -225,13 +225,17 @@ const WHATSAPP="2349016240683";
 const SUPABASE_URL = "https://xovmenojawhnzsvemkji.supabase.co";
 const SUPABASE_KEY = "sb_publishable_3vp3lLt7NnTU-_UX8ZCctg_GOBn9gjf";
 
-let supabase = null;
+  let supabase = null;
 
-if (window.supabase && window.supabase.createClient) {
-  supabase = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+try {
+  if (window.supabase && window.supabase.createClient) {
+    supabase = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+  }
+} catch (error) {
+  console.log("Supabase not available yet");
 }
   
 let media=[
