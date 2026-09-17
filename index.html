@@ -447,7 +447,45 @@ Request Receipt
 `;
 
 }
+async function staffLogin(){
 
+  const email = prompt("TRAMZ Staff Email:");
+  if(!email) return;
+
+  const password = prompt("TRAMZ Staff Password:");
+  if(!password) return;
+
+  if(!supabase){
+    alert("Secure login is not available. Please refresh the page.");
+    return;
+  }
+
+  const { data, error } =
+    await supabase.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+  if(error){
+    alert("Login failed: " + error.message);
+    return;
+  }
+
+  const { data: staff, error: staffError } =
+    await supabase
+      .from("staff_roles")
+      .select("role")
+      .eq("user_id", data.user.id)
+      .single();
+
+  if(staffError || !staff){
+    await supabase.auth.signOut();
+    alert("Access denied. This account is not a TRAMZ staff account.");
+    return;
+  }
+
+  alert("Welcome to TRAMZ Staff.");
+}
 render();
 
 </script>
