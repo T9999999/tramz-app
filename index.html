@@ -475,6 +475,37 @@ async function staffLogin(){
 
   alert("Welcome to TRAMZ Staff.");
 }
+  function staffDashboard(){
+  let bg=document.createElement("div");
+  bg.className="modalbg";
+  bg.innerHTML=`
+  <div class="portal">
+    <button class="close" onclick="this.closest('.modalbg').remove()">×</button>
+
+    <div class="eyebrow">TRAMZ STAFF</div>
+    <h2>Staff Dashboard</h2>
+    <p style="color:#777;font-size:13px">
+      Manage your TRAMZ photos and videos.
+    </p>
+
+    <div style="margin-top:20px">
+      <h3>Upload Media</h3>
+      <input type="file" accept="image/*,video/*" multiple>
+      <button class="btn dark" style="margin-top:10px">
+        Upload
+      </button>
+    </div>
+
+    <div style="margin-top:25px">
+      <button class="btn light" onclick="supabaseClient.auth.signOut();this.closest('.modalbg').remove()">
+        Sign Out
+      </button>
+    </div>
+  </div>
+  `;
+
+  document.body.appendChild(bg);
+  }
 render();
 
 </script>
