@@ -503,11 +503,39 @@ async function staffLogin(){
     </p>
 
     <div style="margin-top:20px">
-      <h3>Upload Media</h3>
-      <input type="file" accept="image/*,video/*" multiple>
-      <button class="btn dark" style="margin-top:10px">
-        Upload
-      </button>
+
+<h3>Upload Media</h3>
+
+<label style="display:block;margin-bottom:8px">
+  Category
+</label>
+
+<select id="uploadCategory"
+  style="width:100%;padding:12px;border:1px solid #ddd;background:white;font-size:15px;margin-bottom:15px">
+
+  <option value="Senator">Senator</option>
+  <option value="Modern Native">Modern Native</option>
+  <option value="Agbada">Agbada</option>
+  <option value="Jalabia">Jalabia</option>
+  <option value="Shirt & Trousers">Shirt & Trousers</option>
+
+</select>
+
+<input
+  id="staffFiles"
+  type="file"
+  accept="image/*,video/*"
+  multiple
+>
+
+<button
+  class="btn dark"
+  style="margin-top:10px"
+  onclick="uploadStaffMedia()">
+  Upload
+</button>
+
+</div>
     </div>
 
     <div style="margin-top:25px">
