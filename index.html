@@ -230,8 +230,7 @@ try {
   console.log("Supabase not available yet");
 }
   
-let media = [
-  {
+let media = [];
     title: "Senator",
     category: "Senator",
     type: "image",
@@ -298,7 +297,143 @@ ${x.type==="video"
 `).join("");
 
 }
+async function uploadStaffMedia(){
 
+  const category = document.getElementById("uploadCategory").value;
+  const input = document.getElementById("staffFiles");
+  const files = Array.from(input.files || []);
+
+  if(!files.length){
+    alert("Please choose at least one photo or video.");
+    return;
+  }
+
+  if(!supabaseClient){
+    alert("Supabase is not available. Please refresh the page.");
+    return;
+  }
+
+  const button = document.querySelector(
+    'button[onclick="uploadStaffMedia()"]'
+  );
+
+  if(button){
+    button.disabled = true;
+    button.textContent = "Uploading...";
+  }
+
+  let uploaded = 0;
+  let failed = 0;
+
+  try{
+
+    for(const file of files){
+
+      const type = file.type.startsWith("video/")
+        ? "video"
+        : "image";
+
+      const safeName = file.name
+        .replace(/[^a-zA-Z0-9._-]/g, "-");
+
+      const filePath =
+        category + "/" +
+        Date.now() + "-" +
+        Math.random().toString(36).substring(2,8) +
+        "-" +
+        safeName;
+
+      /* Upload actual file */
+      const { error: storageError } =
+        await supabaseClient
+          .storage
+          .from("tramz-media")
+          .upload(filePath, file, {
+            cacheControl: "3600",
+            upsert: false,
+            contentType: file.type
+          });
+
+      if(storageError){
+        console.error(storageError);
+        failed++;
+        continue;
+      }
+
+      /* Get public URL */
+      const { data: publicData } =
+        supabaseClient
+          .storage
+          .from("tramz-media")
+          .getPublicUrl(filePath);
+
+      const publicUrl = publicData.publicUrl;
+
+      /* Save media information */
+      const { error: databaseError } =
+        await supabaseClient
+          .from("media")
+          .insert({
+            title: safeName,
+            category: category,
+            type: type,
+            url: publicUrl,
+            storage_path: filePath
+          });
+
+      if(databaseError){
+        console.error(databaseError);
+        failed++;
+        continue;
+      }
+
+      uploaded++;
+    }
+
+    input.value = "";
+
+    alert(
+      "Upload complete!\n\n" +
+      "Category: " + category + "\n" +
+      "Uploaded: " + uploaded + "\n" +
+      "Failed: " + failed
+    );
+
+  }catch(error){
+
+    console.error(error);
+    alert("Upload failed: " + error.message);
+
+  }finally{
+
+    if(button){
+      button.disabled = false;
+      button.textContent = "Upload";
+    }
+
+  }
+  }
+  async function loadMedia(){
+
+  if(!supabaseClient){
+    console.error("Supabase is not available.");
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("media")
+    .select("id,title,category,type,url,storage_path,created_at")
+    .order("created_at", { ascending: false });
+
+  if(error){
+    console.error("Media loading failed:", error);
+    return;
+  }
+
+  media = data || [];
+
+  render();
+  }
 function filterMedia(category,button){
 
 currentFilter=category;
@@ -549,6 +684,7 @@ async function staffLogin(){
   document.body.appendChild(bg);
   }
 render();
+loadMedia();
 
 </script>
 
