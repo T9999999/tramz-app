@@ -125,8 +125,10 @@ with fabric supplied by TRAMZ and delivery across Abuja.
 <div class="filters">
 <button class="active" onclick="filterMedia('All',this)">All</button>
 <button onclick="filterMedia('Senator',this)">Senator</button>
-<button onclick="filterMedia('Native',this)">Native</button>
-<button onclick="filterMedia('Behind the scenes',this)">Behind the scenes</button>
+<button onclick="filterMedia('Modern Native',this)">Modern Native</button>
+<button onclick="filterMedia('Agbada',this)">Agbada</button>
+<button onclick="filterMedia('Jalabia',this)">Jalabia</button>
+<button onclick="filterMedia('Shirt & Trousers',this)">Shirt & Trousers</button>
 </div>
 </div>
 
@@ -228,25 +230,37 @@ try {
   console.log("Supabase not available yet");
 }
   
-let media=[
-{
-title:"Classic Senator",
-category:"Senator",
-type:"image",
-url:"https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1000&q=85"
-},
-{
-title:"Modern Native",
-category:"Native",
-type:"image",
-url:"https://images.unsplash.com/photo-1506629905607-d9a7d8f3c7e1?auto=format&fit=crop&w=1000&q=85"
-},
-{
-title:"Tailoring Detail",
-category:"Behind the scenes",
-type:"image",
-url:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1000&q=85"
-}
+let media = [
+  {
+    title: "Senator",
+    category: "Senator",
+    type: "image",
+    url: "https://images.unsplash.com/photo-1521293915948-0f2b8a1a4e4a?auto=format&fit=crop&w=1000&q=85"
+  },
+  {
+    title: "Modern Native",
+    category: "Modern Native",
+    type: "image",
+    url: "https://images.unsplash.com/photo-1506629905607-d9a7d8f3c7e1?auto=format&fit=crop&w=1000&q=85"
+  },
+  {
+    title: "Agbada",
+    category: "Agbada",
+    type: "image",
+    url: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=1000&q=85"
+  },
+  {
+    title: "Jalabia",
+    category: "Jalabia",
+    type: "image",
+    url: "https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?auto=format&fit=crop&w=1000&q=85"
+  },
+  {
+    title: "Shirt & Trousers",
+    category: "Shirt & Trousers",
+    type: "image",
+    url: "https://images.unsplash.com/photo-1516826957135-700dedea698c?auto=format&fit=crop&w=1000&q=85"
+  }
 ];
 
 let currentFilter="All";
