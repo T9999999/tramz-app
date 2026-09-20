@@ -431,12 +431,18 @@ async function uploadStaffMedia(){
         await supabaseClient
           .from("media")
           .insert({
-            title: safeName,
-            category: category,
-            type: type,
-            url: publicUrl,
-            storage_path: filePath
+          title: safeName,
+          category: category,
+          type: type,
+          url: publicUrl,
+          storage_path: filePath,
+          price: price ? Number(price) : null
           });
+            
+          
+            
+            
+            
 
       if(databaseError){
         console.error(databaseError);
