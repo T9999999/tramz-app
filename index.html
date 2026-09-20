@@ -588,11 +588,17 @@ function selectStyleAndBook(){
 
 function book(e){
 
-e.preventDefault();
+  e.preventDefault();
 
-let f=new FormData(e.target);
+  let f = new FormData(e.target);
 
-let message=
+  let selectedImage = "";
+
+  if(window.currentMediaItem && window.currentMediaItem.url){
+    selectedImage = window.currentMediaItem.url;
+  }
+
+  let message =
 `Hi TRAMZ,
 
 I want to book a tailoring service.
@@ -600,15 +606,18 @@ I want to book a tailoring service.
 Name: ${f.get("name")}
 Phone: ${f.get("phone")}
 Style: ${f.get("style")}
-Date: ${f.get("date")}
-Time: ${f.get("time")}
+Date of delivery: ${f.get("date")}
+Time of delivery: ${f.get("time")}
 Delivery area: ${f.get("area")}
-Notes: ${f.get("notes")}`;
+Notes: ${f.get("notes")}
 
-window.open(
-"https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(message),
-"_blank"
-);
+Selected style image:
+${selectedImage}`;
+
+  window.open(
+    "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(message),
+    "_blank"
+  );
 
 }
 
