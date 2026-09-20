@@ -1,4 +1,4 @@
-2<!doctype html>
+w2<!doctype html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -16,13 +16,23 @@ button,input,textarea{font:inherit}
 .navlinks{display:flex;gap:25px;font-size:13px}
 .navlinks a:hover{opacity:.5}
 .nav button{background:none;border:0;border-bottom:1px solid #171614;cursor:pointer;font-size:12px}
-.hero{width:100%;padding:0;margin:0;display:block;overflow:hidden}
-.hero img{display:block;width:100%;height:auto;max-height:calc(100vh - 70px);object-fit:cover;object-position:center}
+.hero{
+  min-height:78vh;
+  padding:11vh 4%;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  justify-content:center;
+  background-image:linear-gradient(rgba(0,0,0,.35),rgba(0,0,0,.35)),url("tramz-hero.png");
+  background-size:cover;
+  background-position:center;
+  color:white;
+}
 .eyebrow{font-size:10px;letter-spacing:3px;color:#777;margin-bottom:20px}
 h1,h2,h3{font-family:Georgia,serif;font-weight:500}
 h1{font-size:clamp(50px,8vw,100px);line-height:.95;letter-spacing:-4px;margin:0 0 28px}
 h1 em{font-style:italic}
-.hero p{max-width:560px;color:#777;line-height:1.8}
+.hero p{max-width:560px;color:#fff;line-height:1.8}
 .actions{display:flex;gap:10px;margin-top:25px;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 20px;border:1px solid #171614;font-size:12px;cursor:pointer}
 .dark{background:#171614;color:white}
@@ -99,7 +109,21 @@ h1{font-size:55px}
 </header>
 
 <section class="hero">
-  <img src="tramz-hero.png" alt="TRAMZ Premium Custom Tailoring">
+
+<div class="eyebrow">CUSTOM TAILORING • ABUJA / FCT</div>
+
+<h1>Made for your style.<br><em>Tailored by TRAMZ.</em></h1>
+
+<p>
+Premium native wear, tailored to your measurements,
+with fabric supplied by TRAMZ and delivery across Abuja.
+</p>
+
+<div class="actions">
+<a class="btn dark" href="#styles">Explore Styles</a>
+<a class="btn light" href="#book">Book a Service</a>
+</div>
+
 </section>
 
 <section id="styles" class="section">
