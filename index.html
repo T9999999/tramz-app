@@ -512,6 +512,9 @@ render();
 
 function openMedia(item){
 window.currentMediaItem = item;
+  const priceText = item.price
+  ? "₦" + Number(item.price).toLocaleString()
+  : "Price on request";
 let bg=document.createElement("div");
 bg.className="modalbg";
 
