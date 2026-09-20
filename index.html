@@ -485,7 +485,7 @@ async function uploadStaffMedia(){
 
   const { data, error } = await supabaseClient
     .from("media")
-    .select("id,title,category,type,url,storage_path,created_at")
+    .select("id,title,category,type,url,storage_path,price,created_at")
     .order("created_at", { ascending: false });
 
   if(error){
