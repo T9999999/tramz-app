@@ -231,9 +231,56 @@ Open Client Portal
 <div class="grid">
 <input name="name" placeholder="Full name" required>
 <input name="phone" placeholder="Phone / WhatsApp" required>
-<input name="style" placeholder="Style">
-<input name="date" type="date" required>
-<input name="time" type="time" required>
+<div class="selected-style" id="selectedStyleBox">
+  <div style="font-size:16px;color:#777;margin-bottom:10px">
+    Style
+  </div>
+
+  <div id="selectedStyleEmpty" style="color:#777">
+    Choose a style from the catalogue
+  </div>
+
+  <div id="selectedStylePreview" style="display:none">
+    <img id="selectedStyleImage"
+         src=""
+         alt="Selected style"
+         style="width:120px;height:120px;object-fit:cover;border-radius:8px;display:block;margin-bottom:10px">
+
+    <strong id="selectedStyleName"
+            style="font-size:18px;display:block">
+    </strong>
+  </div>
+
+  <input
+    type="hidden"
+    name="style"
+    id="selectedStyleValue"
+    required>
+</div>
+
+<div>
+  <label style="display:block;color:#777;margin-bottom:8px">
+    Select date of delivery
+  </label>
+
+  <input
+    name="date"
+    type="date"
+    required
+    style="width:100%">
+</div>
+
+<div>
+  <label style="display:block;color:#777;margin-bottom:8px">
+    Time of delivery
+  </label>
+
+  <input
+    name="time"
+    type="time"
+    required
+    style="width:100%">
+</div>
 <input name="area" placeholder="Delivery area / zone">
 <textarea name="notes" placeholder="Measurements or special requests"></textarea>
 </div>
@@ -457,7 +504,7 @@ render();
 }
 
 function openMedia(item){
-
+window.currentMediaItem = item;
 let bg=document.createElement("div");
 bg.className="modalbg";
 
@@ -474,13 +521,72 @@ ${item.type==="video"
 <h3>${item.title}</h3>
 <p>${item.category}</p>
 
+<button
+  class="btn dark"
+  type="button"
+  onclick="selectStyleAndBook()"
+  style="margin-top:15px">
+  Book this style
+</button>
+
 </div>
 `;
 
 document.body.appendChild(bg);
 
 }
+function selectStyleAndBook(){
 
+  const item = window.currentMediaItem;
+
+  if(!item){
+    return;
+  }
+
+  const value = document.getElementById("selectedStyleValue");
+  const empty = document.getElementById("selectedStyleEmpty");
+  const preview = document.getElementById("selectedStylePreview");
+  const image = document.getElementById("selectedStyleImage");
+  const name = document.getElementById("selectedStyleName");
+
+  if(value){
+    value.value = item.title || "";
+  }
+
+  if(empty){
+    empty.style.display = "none";
+  }
+
+  if(preview){
+    preview.style.display = "block";
+  }
+
+  if(image){
+    image.src = item.url || "";
+    image.alt = item.title || "Selected style";
+  }
+
+  if(name){
+    name.textContent = item.title || "Selected style";
+  }
+
+  const modal = document.querySelector(".modalbg");
+
+  if(modal){
+    modal.remove();
+  }
+
+  const booking = document.getElementById("book");
+
+  if(booking){
+    booking.scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+  }
+}
+
+function book(e){
 function book(e){
 
 e.preventDefault();
