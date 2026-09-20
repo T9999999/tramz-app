@@ -586,19 +586,20 @@ function selectStyleAndBook(){
   }
 }
 
-function book(e){
+async function book(e){
 
   e.preventDefault();
 
   let f = new FormData(e.target);
 
-  let selectedImage = "";
+  const item = window.currentMediaItem;
 
-  if(window.currentMediaItem && window.currentMediaItem.url){
-    selectedImage = window.currentMediaItem.url;
+  if(!item || !item.url){
+    alert("Please select a style from the catalogue first.");
+    return;
   }
 
-  let message =
+  const message =
 `Hi TRAMZ,
 
 I want to book a tailoring service.
@@ -609,17 +610,49 @@ Style: ${f.get("style")}
 Date of delivery: ${f.get("date")}
 Time of delivery: ${f.get("time")}
 Delivery area: ${f.get("area")}
-Notes: ${f.get("notes")}
+Notes: ${f.get("notes")}`;
 
-Selected style image:
-${selectedImage}`;
+  try{
 
-  window.open(
-    "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(message),
-    "_blank"
-  );
+    const response = await fetch(item.url);
+    const blob = await response.blob();
 
-}
+    const file = new File(
+      [blob],
+      "TRAMZ-" + (item.title || "Selected-Style") + ".jpg",
+      { type: blob.type || "image/jpeg" }
+    );
+
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+
+      await navigator.share({
+        text: message,
+        files: [file]
+      });
+
+    }else{
+
+      window.open(
+        "https://wa.me/" + WHATSAPP +
+        "?text=" + encodeURIComponent(message + "\n\nStyle image:\n" + item.url),
+        "_blank"
+      );
+
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    window.open(
+      "https://wa.me/" + WHATSAPP +
+      "?text=" + encodeURIComponent(message + "\n\nStyle image:\n" + item.url),
+      "_blank"
+    );
+
+  }
+
+}2
 
 function clientPortal(){
 
