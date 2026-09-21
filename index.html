@@ -322,39 +322,137 @@ try {
   
 let media = [];
 
-let currentFilter="All";
+let currentFilter = "All";
+let currentPage = 1;
+const ITEMS_PER_PAGE = 10;
 
 function render(){
 
-let gallery=document.getElementById("gallery");
+  let gallery = document.getElementById("gallery");
 
-let items=media.filter(x =>
-currentFilter==="All" || x.category===currentFilter
-);
+  let items = media.filter(x =>
+    currentFilter === "All" || x.category === currentFilter
+  );
 
-gallery.innerHTML=items.map((x,i)=>`
+  let totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
 
-<article class="card" onclick='openMedia(${JSON.stringify(x)})'>
+  if(totalPages < 1){
+    totalPages = 1;
+  }
 
-<div class="media">
+  if(currentPage > totalPages){
+    currentPage = totalPages;
+  }
 
-${x.type==="video"
-?`<video src="${x.url}" muted></video><div class="play">▶</div>`
-:`<img src="${x.url}" alt="${x.title}">`}
+  let start = (currentPage - 1) * ITEMS_PER_PAGE;
 
-</div>
+  let pageItems = items.slice(
+    start,
+    start + ITEMS_PER_PAGE
+  );
 
-<div class="cardinfo">
-<div>
-<strong>${x.title}</strong>
-<span>${x.category}</span>
-</div>
-<span>→</span>
-</div>
+  gallery.innerHTML = pageItems.map((x,i)=>
 
-</article>
+    `<article class="card" onclick='openMedia(${JSON.stringify(x)})'>
 
-`).join("");
+      <div class="media">
+
+        ${x.type==="video"
+          ? `<video src="${x.url}" muted></video><div class="play">▶</div>`
+          : `<img src="${x.url}" alt="${x.title}">`
+        }
+   function changePage(page){
+
+  currentPage = page;
+
+  render();
+
+  const styles = document.getElementById("styles");
+
+  if(styles){
+    styles.scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+  }
+
+}
+      </div>
+
+      <div class="cardinfo">
+
+        <div>
+          <strong>${x.title}</strong>
+          <span>${x.category}</span>
+        </div>
+
+      </div>
+
+    </article>`
+
+  ).join("");
+
+  let pagination = document.getElementById("pagination");
+
+  if(!pagination){
+
+    pagination = document.createElement("div");
+
+    pagination.id = "pagination";
+
+    pagination.style.cssText =
+      "display:flex;justify-content:center;align-items:center;gap:8px;margin:30px 0;flex-wrap:wrap;";
+
+    gallery.insertAdjacentElement("afterend", pagination);
+  }
+
+  if(items.length <= ITEMS_PER_PAGE){
+
+    pagination.innerHTML = "";
+
+    return;
+  }
+
+  let buttons = "";
+
+  buttons += `
+    <button
+      onclick="changePage(${currentPage - 1})"
+      ${currentPage === 1 ? "disabled" : ""}
+      style="padding:10px 14px;border:1px solid #ccc;background:white;border-radius:6px;cursor:pointer">
+      Previous
+    </button>
+  `;
+
+  for(let i = 1; i <= totalPages; i++){
+
+    buttons += `
+      <button
+        onclick="changePage(${i})"
+        style="
+          padding:10px 14px;
+          border:1px solid #111;
+          background:${i === currentPage ? "#111" : "white"};
+          color:${i === currentPage ? "white" : "#111"};
+          border-radius:6px;
+          cursor:pointer;
+          min-width:42px;
+        ">
+        ${i}
+      </button>
+    `;
+  }
+
+  buttons += `
+    <button
+      onclick="changePage(${currentPage + 1})"
+      ${currentPage === totalPages ? "disabled" : ""}
+      style="padding:10px 14px;border:1px solid #ccc;background:white;border-radius:6px;cursor:pointer">
+      Next
+    </button>
+  `;
+
+  pagination.innerHTML = buttons;
 
 }
 async function uploadStaffMedia(){
