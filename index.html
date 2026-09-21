@@ -261,7 +261,48 @@ Open Client Portal
     id="selectedStyleValue"
     required>
 </div>
+<div style="margin-bottom:20px">
 
+  <div style="color:#777;margin-bottom:10px">
+    Can't find your style?
+  </div>
+
+  <label
+    for="customStyleFile"
+    class="btn dark"
+    style="display:inline-block;cursor:pointer">
+    Upload Your Own Style
+  </label>
+
+  <input
+    id="customStyleFile"
+    type="file"
+    accept="image/*,video/*"
+    style="display:none">
+
+  <div
+    id="customStylePreview"
+    style="display:none;margin-top:15px">
+
+    <div style="color:#777;margin-bottom:8px">
+      Your style
+    </div>
+
+    <img
+      id="customStyleImage"
+      src=""
+      alt="Your uploaded style"
+      style="width:150px;height:150px;object-fit:cover;border-radius:8px;display:none">
+
+    <video
+      id="customStyleVideo"
+      controls
+      style="width:150px;height:150px;object-fit:cover;border-radius:8px;display:none">
+    </video>
+
+  </div>
+
+</div>
 <div>
   <label style="display:block;color:#777;margin-bottom:8px">
     Select date of delivery
@@ -700,21 +741,59 @@ function selectStyleAndBook(){
     });
   }
 }
+document.getElementById("customStyleFile").addEventListener("change", function(){
 
+  const file = this.files[0];
+
+  if(!file){
+    return;
+  }
+
+  document.getElementById("selectedStyleValue").value =
+    "Customer's own style";
+
+  const preview = document.getElementById("customStylePreview");
+  const image = document.getElementById("customStyleImage");
+  const video = document.getElementById("customStyleVideo");
+
+  preview.style.display = "block";
+
+  if(file.type.startsWith("video/")){
+
+    image.style.display = "none";
+    video.style.display = "block";
+    video.src = URL.createObjectURL(file);
+
+  }else{
+
+    video.style.display = "none";
+    image.style.display = "block";
+    image.src = URL.createObjectURL(file);
+
+  }
+
+});
 async function book(e){
 
   e.preventDefault();
 
   let f = new FormData(e.target);
 
+  const customFileInput = document.getElementById("customStyleFile");
+  const customFile = customFileInput && customFileInput.files.length
+    ? customFileInput.files[0]
+    : null;
+
   const item = window.currentMediaItem;
-  const priceText = item && item.price
-  ? "₦" + Number(item.price).toLocaleString()
-  : "Price on request";
-  if(!item || !item.url){
-    alert("Please select a style from the catalogue first.");
+
+  if(!customFile && (!item || !item.url)){
+    alert("Please choose a catalogue style or upload your own style.");
     return;
   }
+
+  const priceText = item && item.price
+    ? "₦" + Number(item.price).toLocaleString()
+    : "Price on request";
 
   const message =
 `Hi TRAMZ,
@@ -724,7 +803,7 @@ I want to book a tailoring service.
 Name: ${f.get("name")}
 Phone: ${f.get("phone")}
 Style: ${f.get("style")}
-Price: ${priceText}
+Price: ${customFile ? "Customer's own style" : priceText}
 Date of delivery: ${f.get("date")}
 Time of delivery: ${f.get("time")}
 Delivery area: ${f.get("area")}
@@ -732,16 +811,32 @@ Notes: ${f.get("notes")}`;
 
   try{
 
-    const response = await fetch(item.url);
-    const blob = await response.blob();
+    let file = null;
 
-    const file = new File(
-      [blob],
-      "TRAMZ-" + (item.title || "Selected-Style") + ".jpg",
-      { type: blob.type || "image/jpeg" }
-    );
+    if(customFile){
 
-    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      file = customFile;
+
+    }else{
+
+      const response = await fetch(item.url);
+      const blob = await response.blob();
+
+      file = new File(
+        [blob],
+        "TRAMZ-" + (item.title || "Selected-Style"),
+        {
+          type: blob.type || "image/jpeg"
+        }
+      );
+
+    }
+
+    if(
+      navigator.share &&
+      navigator.canShare &&
+      navigator.canShare({files:[file]})
+    ){
 
       await navigator.share({
         text: message,
@@ -752,7 +847,7 @@ Notes: ${f.get("notes")}`;
 
       window.open(
         "https://wa.me/" + WHATSAPP +
-        "?text=" + encodeURIComponent(message + "\n\nStyle image:\n" + item.url),
+        "?text=" + encodeURIComponent(message),
         "_blank"
       );
 
@@ -764,13 +859,15 @@ Notes: ${f.get("notes")}`;
 
     window.open(
       "https://wa.me/" + WHATSAPP +
-      "?text=" + encodeURIComponent(message + "\n\nStyle image:\n" + item.url),
+      "?text=" + encodeURIComponent(message),
       "_blank"
     );
 
   }
 
-}2
+}
+
+
 
 function clientPortal(){
 
