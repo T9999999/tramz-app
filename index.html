@@ -888,61 +888,6 @@ Notes: ${f.get("notes")}`;
     console.error(error);
    }
     
-    if(customFile){
-
-      file = customFile;
-
-    }else{
-
-      const response = await fetch(item.url);
-      const blob = await response.blob();
-
-      file = new File(
-        [blob],
-        "TRAMZ-" + (item.title || "Selected-Style"),
-        {
-          type: blob.type || "image/jpeg"
-        }
-      );
-
-    }
-
-    if(
-      navigator.share &&
-      navigator.canShare &&
-      navigator.canShare({files:[file]})
-    ){
-
-      await navigator.share({
-        text: message,
-        files: [file]
-      });
-
-    }else{
-
-      window.open(
-        "https://wa.me/" + WHATSAPP +
-        "?text=" + encodeURIComponent(message),
-        "_blank"
-      );
-
-    }
-
-  }catch(error){
-
-    console.error(error);
-
-    window.open(
-      "https://wa.me/" + WHATSAPP +
-      "?text=" + encodeURIComponent(message),
-      "_blank"
-    );
-
-  }
-
-}
-
-
 
 function clientPortal(){
 
