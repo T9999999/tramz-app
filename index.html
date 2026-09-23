@@ -877,18 +877,27 @@ Notes: ${f.get("notes")}`;
     }
 })();
    try {
-    // Open WhatsApp directly from the button action
-    window.open(
-        "https://wa.me/" + WHATSAPP +
-        "?text=" + encodeURIComponent(message),
-        "_blank"
-    );
-
+    if (
+        customFile &&
+        navigator.share &&
+        navigator.canShare &&
+        navigator.canShare({ files: [customFile] })
+    ) {
+        await navigator.share({
+            text: message,
+            files: [customFile]
+        });
+    } else {
+        window.open(
+            "https://wa.me/" + WHATSAPP +
+            "?text=" + encodeURIComponent(message),
+            "_blank"
+        );
+    }
 } catch (error) {
     console.error(error);
-}
+   }
 
-}
 
 function clientPortal(){
 
