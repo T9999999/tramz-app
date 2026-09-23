@@ -1439,10 +1439,23 @@ async function createOwnerOrder(){
     </p>
   `;
 
-  const { data, error } = await supabaseClient
+  // Get the real customer orders
+  const { data: orders, error } = await supabaseClient
     .from("orders")
-    .select("*")
-    .order("created_at", { ascending:false });
+    .select(`
+      id,
+      client_id,
+      order_number,
+      style_name,
+      status,
+      delivery_address,
+      preferred_date,
+      preferred_time,
+      total_amount,
+      payment_status,
+      created_at
+    `)
+    .order("created_at", { ascending: false });
 
   if(error){
     console.error(error);
@@ -1456,7 +1469,7 @@ async function createOwnerOrder(){
     return;
   }
 
-  if(!data || !data.length){
+  if(!orders || orders.length === 0){
 
     container.innerHTML = `
       <p style="color:#777;font-size:13px">
@@ -1467,47 +1480,107 @@ async function createOwnerOrder(){
     return;
   }
 
-  container.innerHTML = data.map(order => `
+  // Get the customers connected to these orders
+  const clientIds = [
+    ...new Set(
+      orders
+        .map(order => order.client_id)
+        .filter(Boolean)
+    )
+  ];
 
-    <div style="
-      border:1px solid #eee;
-      padding:15px;
-      margin-bottom:12px;
-      background:#fafafa;
-    ">
+  let clients = [];
 
-      <strong>${order.client_name}</strong>
+  if(clientIds.length > 0){
 
-      <div style="font-size:13px;color:#666;margin-top:6px">
-        ${order.client_phone}
-      </div>
+    const { data: clientData, error: clientError } =
+      await supabaseClient
+        .from("clients")
+        .select("id, full_name, phone")
+        .in("id", clientIds);
 
-      <div style="margin-top:8px">
-        <strong>Style:</strong> ${order.style}
-      </div>
-
-      <div style="margin-top:5px">
-        <strong>Amount:</strong>
-        ₦${Number(order.amount || 0).toLocaleString()}
-      </div>
-
-      <div style="margin-top:5px">
-        <strong>Delivery:</strong>
-        ${order.delivery_date || "Not set"}
-      </div>
-
-      <div style="
-        margin-top:8px;
-        font-size:13px;
-        font-weight:600;
-      ">
-        Status: ${order.status}
-      </div>
-
-    </div>
-
-  `).join("");
+    if(clientError){
+      console.error(clientError);
+    } else {
+      clients = clientData || [];
+    }
   }
+
+  const clientMap = {};
+
+  clients.forEach(client => {
+    clientMap[client.id] = client;
+  });
+
+  // Display the orders
+  container.innerHTML = orders.map(order => {
+
+    const client = clientMap[order.client_id] || {};
+
+    const statusText = order.status || "Pending";
+
+    return `
+      <div style="
+        border:1px solid #eee;
+        padding:15px;
+        margin-bottom:12px;
+        background:#fafafa;
+      ">
+
+        <strong>
+          ${client.full_name || "Customer"}
+        </strong>
+
+        <div style="
+          font-size:13px;
+          color:#666;
+          margin-top:5px;
+        ">
+          ${client.phone || "No phone number"}
+        </div>
+
+        <div style="margin-top:10px;">
+          <strong>Order:</strong>
+          ${order.order_number || ""}
+        </div>
+
+        <div style="margin-top:8px;">
+          <strong>Style:</strong>
+          ${order.style_name || "Tailoring Service"}
+        </div>
+
+        <div style="margin-top:8px;">
+          <strong>Amount:</strong>
+          ₦${Number(order.total_amount || 0).toLocaleString()}
+        </div>
+
+        <div style="margin-top:8px;">
+          <strong>Delivery:</strong>
+          ${order.delivery_address || "Not set"}
+        </div>
+
+        <div style="margin-top:8px;">
+          <strong>Date:</strong>
+          ${order.preferred_date || "Not set"}
+        </div>
+
+        <div style="margin-top:8px;">
+          <strong>Payment:</strong>
+          ${order.payment_status || "Pending"}
+        </div>
+
+        <div style="
+          margin-top:10px;
+          font-weight:600;
+        ">
+          Status: ${statusText}
+        </div>
+
+      </div>
+    `;
+
+  }).join("");
+     }
 </script>
 
 </body>
