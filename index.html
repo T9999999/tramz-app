@@ -911,13 +911,11 @@ Sign in to view your order status, balance and private fitting media.
 
 <form onsubmit="clientLogin(event)">
 
-<input id="clientEmail"
-type="email"
-placeholder="Email"
+<input
+id="clientPhone"
+type="tel"
+placeholder="Phone Number"
 required
-style="margin:7px 0">
-
-<input id="clientPhone" type="tel" placeholder="Phone Number" required ...>
 style="margin:7px 0">
 
 <button
@@ -967,6 +965,7 @@ Sign in
 document.body.appendChild(bg);
 
 }
+
 async function signInWithGoogle(){
 
   if(!supabaseClient){
