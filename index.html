@@ -1123,24 +1123,235 @@ async function staffLogin(){
   onclick="uploadStaffMedia()">
   Upload
 </button>
+<hr style="margin:30px 0;border:none;border-top:1px solid #eee">
+
+<h3>Order Management</h3>
+
+<p style="color:#777;font-size:13px;margin-bottom:15px">
+  Create and manage client orders.
+</p>
+
+<div style="margin-bottom:12px">
+  <label style="display:block;margin-bottom:8px">
+    Client Name
+  </label>
+
+  <input
+    id="orderClientName"
+    type="text"
+    placeholder="Client name"
+    style="width:100%;padding:12px;border:1px solid #ddd;font-size:15px;box-sizing:border-box"
+  >
+</div>
+
+<div style="margin-bottom:12px">
+  <label style="display:block;margin-bottom:8px">
+    Client Phone
+  </label>
+
+  <input
+    id="orderClientPhone"
+    type="tel"
+    placeholder="WhatsApp phone number"
+    style="width:100%;padding:12px;border:1px solid #ddd;font-size:15px;box-sizing:border-box"
+  >
+</div>
+
+<div style="margin-bottom:12px">
+  <label style="display:block;margin-bottom:8px">
+    Order / Style
+  </label>
+
+  <input
+    id="orderStyle"
+    type="text"
+    placeholder="e.g. Senator"
+    style="width:100%;padding:12px;border:1px solid #ddd;font-size:15px;box-sizing:border-box"
+  >
+</div>
+
+<div style="margin-bottom:12px">
+  <label style="display:block;margin-bottom:8px">
+    Amount (₦)
+  </label>
+
+  <input
+    id="orderAmount"
+    type="number"
+    min="0"
+    step="100"
+    placeholder="e.g. 150000"
+    style="width:100%;padding:12px;border:1px solid #ddd;font-size:15px;box-sizing:border-box"
+  >
+</div>
+
+<div style="margin-bottom:15px">
+  <label style="display:block;margin-bottom:8px">
+    Delivery Date
+  </label>
+
+  <input
+    id="orderDeliveryDate"
+    type="date"
+    style="width:100%;padding:12px;border:1px solid #ddd;font-size:15px;box-sizing:border-box"
+  >
+</div>
+
+<button
+  class="btn dark"
+  onclick="createOwnerOrder()">
+  Create Order
+</button>
+<div id="ownerOrders" style="margin-top:25px">
+  <p style="color:#777;font-size:13px">
+    Orders will appear here.
+  </p>
+</div>
 
 </div>
-    </div>
 
-    <div style="margin-top:25px">
-      <button class="btn light" onclick="supabaseClient.auth.signOut();this.closest('.modalbg').remove()">
-        Sign Out
-      </button>
-    </div>
-  </div>
-  `;
+<div style="margin-top:25px">
+  <button class="btn light" onclick="supabaseClient.auth.signOut();this.closest('.modalbg').remove()">
+    Sign Out
+  </button>
+</div>
+</div>
+`;
 
   document.body.appendChild(bg);
+
+loadOwnerOrders();
   }
 render();
 loadMedia();
+async function createOwnerOrder(){
 
+  const clientName = document.getElementById("orderClientName").value.trim();
+  const clientPhone = document.getElementById("orderClientPhone").value.trim();
+  const style = document.getElementById("orderStyle").value.trim();
+  const amount = document.getElementById("orderAmount").value;
+  const deliveryDate = document.getElementById("orderDeliveryDate").value;
+
+  if(!clientName || !clientPhone || !style){
+    alert("Please enter the client name, phone number and style.");
+    return;
+  }
+
+  if(!supabaseClient){
+    alert("Supabase is not available. Please refresh the page.");
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from("orders")
+    .insert([{
+      client_name: clientName,
+      client_phone: clientPhone,
+      style: style,
+      amount: amount || 0,
+      delivery_date: deliveryDate || null
+    }])
+    .select()
+    .single();
+
+  if(error){
+    console.error(error);
+    alert("Could not create order: " + error.message);
+    return;
+  }
+
+  alert("Order created successfully.");
+
+  document.getElementById("orderClientName").value = "";
+  document.getElementById("orderClientPhone").value = "";
+  document.getElementById("orderStyle").value = "";
+  document.getElementById("orderAmount").value = "";
+  document.getElementById("orderDeliveryDate").value = "";
+
+  loadOwnerOrders();
+  }
+  async function loadOwnerOrders(){
+
+  const container = document.getElementById("ownerOrders");
+
+  if(!container || !supabaseClient) return;
+
+  container.innerHTML = `
+    <p style="color:#777;font-size:13px">
+      Loading orders...
+    </p>
+  `;
+
+  const { data, error } = await supabaseClient
+    .from("orders")
+    .select("*")
+    .order("created_at", { ascending:false });
+
+  if(error){
+    console.error(error);
+
+    container.innerHTML = `
+      <p style="color:#b00020;font-size:13px">
+        Could not load orders.
+      </p>
+    `;
+
+    return;
+  }
+
+  if(!data || !data.length){
+
+    container.innerHTML = `
+      <p style="color:#777;font-size:13px">
+        No orders yet.
+      </p>
+    `;
+
+    return;
+  }
+
+  container.innerHTML = data.map(order => `
+
+    <div style="
+      border:1px solid #eee;
+      padding:15px;
+      margin-bottom:12px;
+      background:#fafafa;
+    ">
+
+      <strong>${order.client_name}</strong>
+
+      <div style="font-size:13px;color:#666;margin-top:6px">
+        ${order.client_phone}
+      </div>
+
+      <div style="margin-top:8px">
+        <strong>Style:</strong> ${order.style}
+      </div>
+
+      <div style="margin-top:5px">
+        <strong>Amount:</strong>
+        ₦${Number(order.amount || 0).toLocaleString()}
+      </div>
+
+      <div style="margin-top:5px">
+        <strong>Delivery:</strong>
+        ${order.delivery_date || "Not set"}
+      </div>
+
+      <div style="
+        margin-top:8px;
+        font-size:13px;
+        font-weight:600;
+      ">
+        Status: ${order.status}
+      </div>
+
+    </div>
+
+  `).join("");
+  }
 </script>
 
 </body>
-  </html>
+</html>
