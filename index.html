@@ -1439,7 +1439,6 @@ async function createOwnerOrder(){
     </p>
   `;
 
-  // Get the real customer orders
   const { data: orders, error } = await supabaseClient
     .from("orders")
     .select(`
@@ -1480,7 +1479,6 @@ async function createOwnerOrder(){
     return;
   }
 
-  // Get the customers connected to these orders
   const clientIds = [
     ...new Set(
       orders
@@ -1512,7 +1510,6 @@ async function createOwnerOrder(){
     clientMap[client.id] = client;
   });
 
-  // Display the orders
   container.innerHTML = orders.map(order => {
 
     const client = clientMap[order.client_id] || {};
@@ -1569,18 +1566,74 @@ async function createOwnerOrder(){
           ${order.payment_status || "Pending"}
         </div>
 
+        <div style="margin-top:12px;">
+          <strong>Status:</strong>
+          ${statusText}
+        </div>
+
         <div style="
+          display:flex;
+          gap:8px;
+          flex-wrap:wrap;
           margin-top:10px;
-          font-weight:600;
         ">
-          Status: ${statusText}
+
+          <button
+            class="btn dark"
+            type="button"
+            onclick="updateOrderStatus('${order.id}', 'Pending')"
+          >
+            Pending
+          </button>
+
+          <button
+            class="btn dark"
+            type="button"
+            onclick="updateOrderStatus('${order.id}', 'In Progress')"
+          >
+            In Progress
+          </button>
+
+          <button
+            class="btn dark"
+            type="button"
+            onclick="updateOrderStatus('${order.id}', 'Done')"
+          >
+            Done
+          </button>
+
         </div>
 
       </div>
     `;
 
   }).join("");
-     }
+}
+
+
+async function updateOrderStatus(orderId, newStatus){
+
+  if(!supabaseClient) return;
+
+  const { error } = await supabaseClient
+    .from("orders")
+    .update({
+      status: newStatus
+    })
+    .eq("id", orderId);
+
+  if(error){
+
+    console.error(error);
+
+    alert("Could not update order status.");
+
+    return;
+  }
+
+  // Refresh the Staff Dashboard orders
+  await loadOwnerOrders();
+}
 </script>
 
 </body>
