@@ -897,11 +897,52 @@ Sign in to view your order status, balance and private fitting media.
 
 <form onsubmit="clientLogin(event)">
 
-<input id="clientEmail" type="email" placeholder="Email" required style="margin:7px 0">
+<input id="clientEmail"
+type="email"
+placeholder="Email"
+required
+style="margin:7px 0">
 
-<input id="clientPassword" type="password" placeholder="Password" required style="margin:7px 0">
+<input id="clientPassword"
+type="password"
+placeholder="Password"
+required
+style="margin:7px 0">
 
-<button class="btn dark" style="margin-top:10px">
+<button
+type="button"
+onclick="signInWithGoogle()"
+style="
+width:100%;
+padding:12px;
+background:white;
+color:#111;
+border:1px solid #ddd;
+border-radius:6px;
+font-size:15px;
+cursor:pointer;
+margin-top:10px">
+Continue with Google
+</button>
+
+<div style="
+display:flex;
+align-items:center;
+gap:10px;
+margin:12px 0;
+color:#999;
+font-size:12px">
+
+<div style="height:1px;background:#ddd;flex:1"></div>
+OR
+<div style="height:1px;background:#ddd;flex:1"></div>
+
+</div>
+
+<button
+type="submit"
+class="btn dark"
+style="margin-top:5px">
 Sign in
 </button>
 
@@ -915,6 +956,26 @@ Sign in
 document.body.appendChild(bg);
 
 }
+async function signInWithGoogle(){
+
+  if(!supabaseClient){
+    alert("Supabase is not available. Please refresh the page.");
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: window.location.origin
+    }
+  });
+
+  if(error){
+    console.error(error);
+    alert("Google sign-in failed: " + error.message);
+  }
+
+}2
 
 function clientLogin(e){
 
