@@ -998,7 +998,8 @@ async function signInWithGoogle(){
   }
 
 }
-async function clientLogin(e){
+
+    async function clientLogin(e){
   e.preventDefault();
 
   const phone = String(
@@ -1025,18 +1026,16 @@ async function clientLogin(e){
     return;
   }
 
-  try{
-    // Find this customer by phone number
-    const { data: client, error: clientError } =
-      await supabaseClient
-        .from("clients")
-        .select("id, full_name, phone")
-        .eq("phone", phone)
-        .maybeSingle();
+  try {
 
-    if(clientError) throw clientError;
+    const { data: rows, error } = await supabaseClient
+      .rpc("get_client_orders_by_phone", {
+        p_phone: phone
+      });
 
-    if(!client){
+    if(error) throw error;
+
+    if(!rows || rows.length === 0){
       message.innerHTML = `
         <p style="color:#b00020;margin-top:20px;">
           No customer was found with this phone number.
@@ -1045,26 +1044,30 @@ async function clientLogin(e){
       return;
     }
 
-    // Get ONLY this customer's orders
-    const { data: orders, error: ordersError } =
-      await supabaseClient
-        .from("orders")
-        .select(`
-          order_number,
-          style_name,
-          status,
-          delivery_address,
-          preferred_date,
-          preferred_time,
-          total_amount,
-          payment_status
-        `)
-        .eq("client_id", client.id)
-        .order("preferred_date", { ascending: false });
+    const first = rows[0];
 
-    if(ordersError) throw ordersError;
+    const client = {
+      id: first.client_id,
+      full_name: first.client_name,
+      phone: first.client_phone
+    };
 
-    if(!orders || orders.length === 0){
+    const orders = rows
+      .filter(row => row.order_id)
+      .map(row => ({
+        id: row.order_id,
+        order_number: row.order_number,
+        style_name: row.style_name,
+        status: row.status,
+        delivery_address: row.delivery_address,
+        preferred_date: row.preferred_date,
+        preferred_time: row.preferred_time,
+        total_amount: row.total_amount,
+        payment_status: row.payment_status,
+        created_at: row.created_at
+      }));
+
+    if(orders.length === 0){
       message.innerHTML = `
         <div style="margin-top:25px;padding-top:20px;border-top:1px solid #ddd;">
           <h3>Welcome, ${client.full_name || "Customer"}</h3>
@@ -1082,7 +1085,17 @@ async function clientLogin(e){
 
         ${orders.map(order => {
 
-          let statusText = order.status || "Pending";
+          const statusText = order.status || "Pending";
+
+          let statusColor = "#d97706";
+
+          if(statusText === "In Progress"){
+            statusColor = "#2563eb";
+          }
+
+          if(statusText === "Done"){
+            statusColor = "#16a34a";
+          }
 
           return `
             <div class="order" style="
@@ -1092,57 +1105,52 @@ async function clientLogin(e){
               border-radius:8px;
             ">
 
-              <div class="orderhead">
-                <div>
-                  <strong>${order.order_number || ""}</strong>
-                  <span>${order.style_name || "Tailoring Service"}</span>
-                </div>
-
-                <span class="status">
-                  ${statusText}
-                </span>
+              <div>
+                <strong>Order:</strong>
+                ${order.order_number || "—"}
               </div>
 
-              <p style="font-size:13px;color:#777;">
-                Your order is currently:
-                <strong>${statusText}</strong>
-              </p>
+              <div style="margin-top:8px;">
+                <strong>Style:</strong>
+                ${order.style_name || "Tailoring Service"}
+              </div>
 
-              <p>
-                <strong>Delivery:</strong>
-                ${order.delivery_address || "Not provided"}
-              </p>
+              <div style="margin-top:8px;">
+                <strong>Amount:</strong>
+                ₦${Number(order.total_amount || 0).toLocaleString()}
+              </div>
 
-              <p>
-                <strong>Date:</strong>
-                ${order.preferred_date || "Not set"}
-              </p>
-
-              <p>
+              <div style="margin-top:8px;">
                 <strong>Payment:</strong>
                 ${order.payment_status || "Pending"}
-              </p>
-              <p>
-               <strong>Total Amount:</strong>
-               ₦${Number(order.total_amount || 0).toLocaleString()}
-             </p>
+              </div>
+
+              <div style="
+                margin-top:12px;
+                font-weight:600;
+                color:${statusColor};
+              ">
+                Status: ${statusText}
+              </div>
+
             </div>
           `;
+
         }).join("")}
       </div>
     `;
 
-  }catch(error){
+  } catch(error) {
 
-    console.error("Client portal error:", error);
+    console.error(error);
 
     message.innerHTML = `
       <p style="color:#b00020;margin-top:20px;">
-        Unable to load your orders. Please try again.
+        Could not load your orders. Please try again.
       </p>
     `;
   }
-}
+    }
 
 async function staffLogin(){
 
