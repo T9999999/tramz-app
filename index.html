@@ -857,15 +857,49 @@ Notes: ${f.get("notes")}`;
         const response = await fetch(item.url);
         const blob = await response.blob();
 
-        shareFile = new File(
-            [blob],
-            "TRAMZ-style.jpg",
-            {
-                type: blob.type || "image/jpeg"
-            }
-        );
-    }
+let fileName = "TRAMZ-style";
+let fileType = blob.type || "";
 
+try {
+  const urlPath = new URL(item.url, window.location.href).pathname;
+  const urlName = decodeURIComponent(
+    urlPath.split("/").pop() || ""
+  );
+
+  if (urlName) {
+    fileName = urlName;
+  }
+} catch (e) {
+  console.log("Could not read media filename:", e);
+}
+
+if (!fileType) {
+  const extension = fileName
+    .split(".")
+    .pop()
+    .toLowerCase();
+
+  if (extension === "mp4") {
+    fileType = "video/mp4";
+  } else if (extension === "webm") {
+    fileType = "video/webm";
+  } else if (extension === "mov") {
+    fileType = "video/quicktime";
+  } else if (extension === "png") {
+    fileType = "image/png";
+  } else if (extension === "jpg" || extension === "jpeg") {
+    fileType = "image/jpeg";
+  }
+}
+
+shareFile = new File(
+  [blob],
+  fileName,
+  {
+    type: fileType || "application/octet-stream"
+  }
+);
+  }
     if (
         shareFile &&
         navigator.share &&
