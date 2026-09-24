@@ -877,28 +877,58 @@ Notes: ${f.get("notes")}`;
     }
 })();
    try {
+
+    let shareFile = customFile;
+
+    if (!shareFile && item && item.url) {
+
+        const response = await fetch(item.url);
+        const blob = await response.blob();
+
+        shareFile = new File(
+            [blob],
+            "TRAMZ-style.jpg",
+            {
+                type: blob.type || "image/jpeg"
+            }
+        );
+    }
+
     if (
-        customFile &&
+        shareFile &&
         navigator.share &&
         navigator.canShare &&
-        navigator.canShare({ files: [customFile] })
+        navigator.canShare({ files: [shareFile] })
     ) {
+
         await navigator.share({
             text: message,
-            files: [customFile]
+            files: [shareFile]
         });
+
     } else {
+
         window.open(
             "https://wa.me/" + WHATSAPP +
             "?text=" + encodeURIComponent(message),
             "_blank"
         );
-    }
-} catch (error) {
-    console.error(error);
-}
 
-}
+    }
+
+} catch (error) {
+
+    console.error("WhatsApp sharing failed:", error);
+
+    window.open(
+        "https://wa.me/" + WHATSAPP +
+        "?text=" + encodeURIComponent(message),
+        "_blank"
+    );
+
+   }
+
+   }
 
 function clientPortal(){
 
