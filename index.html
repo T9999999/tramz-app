@@ -537,10 +537,13 @@ footer .whatsapp span{
   background:#f7f4ee;
   color:#222;
   width:min(600px,100%);
-  min-height:100%;
+  height:calc(100vh - 40px);
+  max-height:calc(100vh - 40px);
+  min-height:0;
   margin-left:auto;
   padding:30px;
-  overflow:auto;
+  overflow-y:auto;
+  box-sizing:border-box;
 }
 
 .portal h2{
