@@ -1866,8 +1866,16 @@ async function staffLogin(){
   Upload
 </button>
 <div style="margin-top:25px">
-  <h3>Manage Uploaded Media</h3>
-  <div id="staffMediaList"></div>
+<button
+  class="btn dark"
+  type="button"
+  onclick="toggleStaffMedia()"
+  style="margin-top:25px;"
+>
+  Manage Uploaded Media
+</button>
+
+<div id="staffMediaList" style="display:none;"></div>
 </div>
 
 <div style="margin-top:25px">
@@ -1881,6 +1889,18 @@ async function staffLogin(){
   document.body.appendChild(bg);
 
 loadOwnerOrders();
+  }
+  function toggleStaffMedia(){
+  const box = document.getElementById("staffMediaList");
+
+  if(!box) return;
+
+  if(box.style.display === "none"){
+    box.style.display = "block";
+    renderStaffMedia();
+  }else{
+    box.style.display = "none";
+  }
   }
   function renderStaffMedia(){
 
