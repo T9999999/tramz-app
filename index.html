@@ -1222,8 +1222,8 @@ async function uploadStaffMedia(){
 
   media = data || [];
 
-  render();
-  }
+render();
+renderStaffMedia();
 function filterMedia(category,button){
 
 currentFilter=category;
@@ -1863,6 +1863,10 @@ async function staffLogin(){
   onclick="uploadStaffMedia()">
   Upload
 </button>
+<div style="margin-top:25px">
+  <h3>Manage Uploaded Media</h3>
+  <div id="staffMediaList"></div>
+</div>
 
 <div style="margin-top:25px">
   <button class="btn light" onclick="supabaseClient.auth.signOut();this.closest('.modalbg').remove()">
@@ -1876,6 +1880,156 @@ async function staffLogin(){
 
 loadOwnerOrders();
   }
+  function renderStaffMedia(){
+
+  const box = document.getElementById("staffMediaList");
+
+  if(!box) return;
+
+  if(!media || !media.length){
+    box.innerHTML = "<p>No uploaded media yet.</p>";
+    return;
+  }
+
+  box.innerHTML = media.map(item => `
+    <div style="
+      border:1px solid #ddd;
+      border-radius:12px;
+      padding:12px;
+      margin-top:15px;
+    ">
+
+      ${
+        item.type === "video"
+        ? `<video src="${item.url}" controls style="width:100%;border-radius:8px"></video>`
+        : `<img src="${item.url}" style="width:100%;border-radius:8px">`
+      }
+
+      <p><strong>${item.title || "Untitled"}</strong></p>
+
+      <p>Category: ${item.category}</p>
+
+      <p>
+        Price:
+        ₦${item.price ? Number(item.price).toLocaleString() : "Price on request"}
+      </p>
+
+      <button
+        class="btn dark"
+        onclick="editStaffMedia('${item.id}')">
+        Edit
+      </button>
+
+      <button
+        class="btn light"
+        onclick="deleteStaffMedia('${item.id}')">
+        Delete
+      </button>
+
+    </div>
+  `).join("");
+  }
+  async function editStaffMedia(id){
+
+  const item = media.find(x => String(x.id) === String(id));
+
+  if(!item) return;
+
+  const newPrice = prompt(
+    "Enter the new price (₦):",
+    item.price || ""
+  );
+
+  if(newPrice === null) return;
+
+  const cleanPrice = Number(
+    String(newPrice).replace(/,/g, "").trim()
+  );
+
+  if(!Number.isFinite(cleanPrice) || cleanPrice < 0){
+    alert("Please enter a valid price.");
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("media")
+    .update({
+      price: cleanPrice
+    })
+    .eq("id", item.id);
+
+  if(error){
+    console.error(error);
+    alert("Could not update the price.");
+    return;
+  }
+
+  item.price = cleanPrice;
+
+  render();
+  renderStaffMedia();
+
+  alert("Price updated successfully.");
+}
+
+
+async function deleteStaffMedia(id){
+
+  const item = media.find(x => String(x.id) === String(id));
+
+  if(!item) return;
+
+  const confirmed = confirm(
+    `Delete "${item.title || "this media"}" from the catalogue?`
+  );
+
+  if(!confirmed) return;
+
+  try{
+
+    if(item.storage_path){
+
+      const { error: storageError } =
+        await supabaseClient
+          .storage
+          .from("tramz-media")
+          .remove([item.storage_path]);
+
+      if(storageError){
+        console.error(storageError);
+        alert("Could not delete the file from storage.");
+        return;
+      }
+    }
+
+    const { error: databaseError } =
+      await supabaseClient
+        .from("media")
+        .delete()
+        .eq("id", item.id);
+
+    if(databaseError){
+      console.error(databaseError);
+      alert("Could not delete the catalogue record.");
+      return;
+    }
+
+    media = media.filter(
+      x => String(x.id) !== String(item.id)
+    );
+
+    render();
+    renderStaffMedia();
+
+    alert("Media deleted successfully.");
+
+  }catch(error){
+
+    console.error(error);
+    alert("Delete failed.");
+
+  }
+}
 render();
 loadMedia();
 async function createOwnerOrder(){
