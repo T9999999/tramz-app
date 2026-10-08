@@ -1922,7 +1922,7 @@ loadOwnerOrders();
   box.prepend(back);
 }
 
-function openStaffOrdersPanel(){
+async function openStaffOrdersPanel(){
   const box = document.getElementById("ownerOrders");
   if(!box) return;
 
@@ -1934,7 +1934,7 @@ function openStaffOrdersPanel(){
   box.style.overflowY = "auto";
   box.style.padding = "20px";
 
-  loadOwnerOrders();
+  await loadOwnerOrders();
 
 const back = document.createElement("button");
 back.className = "btn light";
