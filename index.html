@@ -1417,6 +1417,10 @@ Notes: ${f.get("notes")}`;
                 p_total_amount: customFile
                     ? null
                     : Number(item.price)
+                p_media_url: customFile
+                    ? null
+                    : (item && item.url ? item.url : null)
+      
             }
         );
 
