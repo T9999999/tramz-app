@@ -2327,41 +2327,23 @@ const doneStyle = currentStatus === "Done"
           ${statusText}
         </div>
 
-        <div style="
-          display:flex;
-          gap:8px;
-          flex-wrap:wrap;
-          margin-top:10px;
-        ">
-
-          <button
-            class="btn dark"
-            style="${pendingStyle}"
-            type="button"
-           onclick="updateOrderStatus('${order.id}', 'Pending')"
-         >
-           Pending
-         </button>
-
-          <button
-            class="btn dark"
-            style="${progressStyle}"
-            type="button"
-            onclick="updateOrderStatus('${order.id}', 'In Progress')"
-          >
-            In Progress
-          </button>
-
-          <button
-            class="btn dark"
-            style="${doneStyle}"
-            type="button"
-            onclick="updateOrderStatus('${order.id}', 'Done')"
-          >
-            Done
-          </button>
-
-        </div>
+        
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:18px;">
+         <button onclick="updateOrderStatus('${order.id}', 'Pending')"
+         style="${pendingStyle};border-radius:10px;padding:12px 4px;font-weight:600;">
+         ◷ PENDING
+       </button>
+       
+       <button onclick="updateOrderStatus('${order.id}', 'In Progress')"
+        style="${progressStyle};border-radius:10px;padding:12px 4px;font-weight:600;">
+        ◌ IN PROGRESS
+      </button>
+      
+      <button onclick="updateOrderStatus('${order.id}', 'Done')"
+        style="${doneStyle};border-radius:10px;padding:12px 4px;font-weight:600;">
+       ✓ DONE
+     </button>
+     </div>
 
       </div>
     `;
