@@ -2265,16 +2265,24 @@ const doneStyle = currentStatus === "Done"
   : "background-color: #e5e7eb; color: #374151;";
  
     return `
-      <div style="
-        border:1px solid #eee;
-        padding:15px;
-        margin-bottom:12px;
-        background:#fafafa;
+       <div style="
+        background:#ffffff;
+        color:#172033;
+        border:1px solid #d9dce3;
+        border-radius:16px;
+        padding:22px;
+        margin-bottom:18px;
+        box-shadow:0 2px 8px rgba(0,0,0,0.06);
       ">
 
-        <strong>
-          ${client.full_name || "Customer"}
-        </strong>
+        <strong style="
+        display:block;
+        font-size:22px;
+        color:#172033;
+        margin-bottom:8px;
+      ">
+       Welcome, ${client.full_name || "Customer"}
+       </strong>
 
         <div style="
           font-size:13px;
@@ -2284,22 +2292,22 @@ const doneStyle = currentStatus === "Done"
           ${client.phone || "No phone number"}
         </div>
 
-        <div style="margin-top:10px;">
+        <div style="margin-top:16px;padding:12px;background:#f4f5f7;border:1px solid #e1e4e8;border-radius:10px;">
           <strong>Order:</strong>
           ${order.order_number || ""}
         </div>
 
-        <div style="margin-top:8px;">
+        <div style="margin-top:12px;padding:10px 12px;border-bottom:1px solid #e5e7eb;">
           <strong>Style:</strong>
           ${order.style_name || "Tailoring Service"}
         </div>
 
-        <div style="margin-top:8px;">
+        <div style="margin-top:12px;padding:10px 12px;border-bottom:1px solid #e5e7eb;">
           <strong>Amount:</strong>
           ₦${Number(order.total_amount || 0).toLocaleString()}
         </div>
 
-        <div style="margin-top:8px;">
+        <div style="margin-top:12px;padding:10px 12px;border-bottom:1px solid #e5e7eb;">
           <strong>Delivery:</strong>
           ${order.delivery_address || "Not set"}
         </div>
@@ -2309,7 +2317,7 @@ const doneStyle = currentStatus === "Done"
           ${order.preferred_date || "Not set"}
         </div>
 
-        <div style="margin-top:8px;">
+        <div style="margin-top:12px;padding:10px 12px;border-bottom:1px solid #e5e7eb;">
           <strong>Payment:</strong>
           ${order.payment_status || "Pending"}
         </div>
