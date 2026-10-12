@@ -1937,6 +1937,8 @@ async function openStaffOrdersPanel(){
   box.style.zIndex = "9999";
   box.style.overflowY = "auto";
   box.style.padding = "20px";
+  box.style.boxSizing = "border-box";
+  box.style.scrollPaddingTop = "70px";
 
   await loadOwnerOrders();
 
@@ -1944,7 +1946,11 @@ const back = document.createElement("button");
 back.className = "btn light";
 back.type = "button";
 back.textContent = "← Back";
-back.style.marginBottom = "20px";
+back.style.marginBottom = "20px"; 
+  back.style.position = "sticky";
+back.style.top = "10px";
+back.style.zIndex = "10000";
+back.style.background = "#fff";
 back.onclick = function(){
   box.style.display = "none";
 };
