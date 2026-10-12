@@ -2328,19 +2328,19 @@ const doneStyle = currentStatus === "Done"
         </div>
 
         
-        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:18px;">
+        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:12px;">2
          <button onclick="updateOrderStatus('${order.id}', 'Pending')"
-         style="${pendingStyle};border-radius:10px;padding:12px 4px;font-weight:600;">
+         style="${pendingStyle};border-radius:10px;padding:10px 2px;font-size:11px;font-weight:600;white-space:nowrap;
          ◷ PENDING
        </button>
        
        <button onclick="updateOrderStatus('${order.id}', 'In Progress')"
-        style="${progressStyle};border-radius:10px;padding:12px 4px;font-weight:600;">
+        style="${progressStyle};border-radius:10px;padding:10px 2px;font-size:11px;font-weight:600;white-space:nowrap;
         ◌ IN PROGRESS
       </button>
       
       <button onclick="updateOrderStatus('${order.id}', 'Done')"
-        style="${doneStyle};border-radius:10px;padding:12px 4px;font-weight:600;">
+        style="${doneStyle};border-radius:10px;padding:10px 2px;font-size:11px;font-weight:600;white-space:nowrap;
        ✓ DONE
      </button>
      </div>
